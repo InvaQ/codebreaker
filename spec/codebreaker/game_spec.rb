@@ -2,11 +2,10 @@ require 'spec_helper'
 
 module Codebreaker
   RSpec.describe Game do
-    
+    let(:game) {Game.new('Bob')}
 
 
     context '#initialize' do
-      let(:game) {Game.new('Bob')}
 
       it 'current_user must be a Gamer' do 
         expect(game.current_user).to be_an_instance_of(Gamer)
@@ -30,7 +29,13 @@ module Codebreaker
     end
 
     context 'when #guess code' do
-      let(:game) {Game.new('Bob')}
+
+      context 'when code is not valid' do
+        it 'should return warning: You should enter 4 numbers from 1 to 6!' do
+          allow(game).to receive(:code_valid?).and_return(false)
+          expect(game.guess_code('1234')).to eq("You should enter 4 numbers from 1 to 6!")
+        end
+      end
 
       context 'consist of numbers 1-6' do        
         it '#is_valid' do      
@@ -55,20 +60,11 @@ module Codebreaker
       it 'should decrease tries_left by 1' do        
         expect {game.guess_code('1234')}.to change{ game.tries_left }.by(-1)
       end
-      context 'cause #game_over?' do 
-        it 'tries_left = 0' do
-          game.tries_left = 1
-          expect(game.guess_code('1234')).to eq('GAME OVER')
-        end    
-        it 'guess_code == secret_code' do
-          game.instance_variable_set(:@secret_code, '1234')
-          expect(game.guess_code('1234')).to eq('++++')
-        end
-      end            
+                 
     end     
 
     context '#algoritm' do 
-      let(:game) {Game.new('Bob')}
+      
       [
       ['1234', '1234', '++++'], ['1234', '4321', '----'], ['1234', '6616', '-'],
       ['1234', '2552', '-'], ['1234', '6254', '++'], ['1234', '1235', '+++'], 
@@ -76,7 +72,7 @@ module Codebreaker
       ['1234', '1243','++--'], ['6143', '4163', '++--'],['1234', '4326', '---'],
       ['1234', '3525', '--'],  ['1234', '4255', '+-'],['1234', '5431', '+--'],
       ['1115', '1231', '+-'], ['1231', '1111', '++'],['1144', '4411', '----'],
-      ['1234', '5555', ''], ['1111', '2211', '++'], ['5151', '1515', '----']
+      ['1233', '5665', ''], ['1111', '2211', '++'], ['5151', '1515', '----']
         ].each do |code|
             context "When secret code is #{code[0]}, gamer guess #{code[1]}" do 
               it "should reply #{code[2]}" do
@@ -88,6 +84,43 @@ module Codebreaker
             end
           end
       end
+
+
+      context '#get_hint' do
+
+        it 'should decrease hints by 1' do
+          expect {game.send(:get_hint)}.to change{ game.hints }.by(-1)
+        end
+
+        it 'should show one number of secret code' do
+          expect(game.instance_variable_get(:@secret_code)).to include(game.send(:get_hint))
+        end
+      end
+
+      context '#break_the_code' do
+
+        context 'cause game_over' do 
+        it 'when losing the game' do
+          game.tries_left = 0
+          expect(game.break_the_code('1234')).to eq('GAME OVER')
+        end    
+        it 'when won the game' do
+          game.instance_variable_set(:@secret_code, '1234')
+          expect(game.break_the_code('1234')).to eq('Congratulation, You have broken the code!')
+        end
+      end 
+
+      end
+
+
+
+
+
+
+
+
+
+      
   end
 end
 #gamer = Gamer.new('Kovalenko')

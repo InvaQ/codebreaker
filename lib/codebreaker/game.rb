@@ -1,25 +1,36 @@
 module Codebreaker
-
+  
+  
   class Game
-    attr_accessor :gamer_guess, :current_user, :tries_left, :hints, :guess
+    TRIES = 6
+    HINTS = 1
+    attr_accessor :gamer_guess, :current_user, :tries_left, :hints
 
     def initialize(name)      
       @current_user = Gamer.new(name)
       @secret_code = generate_secret_code
-      @tries_left = 6
-      @hints = 1
+      @tries_left = TRIES
+      @hints = HINTS
     end
     
     def guess_code(code)
       if code_valid?(code)
         @gamer_guess = code
-        @tries_left -= 1
-      end
-      game_over?
+        @tries_left -= 1        
+      else
+        "You should enter 4 numbers from 1 to 6!"
+      end      
+    end
+
+    def break_the_code(code)
+      return 'GAME OVER' if losing?
+      guess_code(code)
+      return 'Congratulation, You have broken the code!' if won?
+      algoritm(@secret_code, @gamer_guess)
     end
 
 
-    private
+    #private
 
     def code_valid?(code)
       !!code.match(/\A[1-6]{4}\Z/)
@@ -29,9 +40,12 @@ module Codebreaker
       (0...4).map { rand(1..6) }.join
     end
 
-    def game_over?
-      return 'GAME OVER' if @tries_left == 0
-      return '++++' if @gamer_guess == @secret_code
+    def losing?
+      @tries_left == 0      
+    end
+
+    def won?
+      @gamer_guess == @secret_code
     end
 
     def algoritm(secret_code, gamer_guess)
@@ -54,20 +68,13 @@ module Codebreaker
       result
     end
 
+    def get_hint
+      @hints -= 1
+      @secret_code[rand(4)]
+    end
+
   end
 
   
-
-
-
-
-  class Gamer
-    attr_accessor :name 
-
-    def initialize(name)
-      @name = name
-    end
-  end
-
 
 end
