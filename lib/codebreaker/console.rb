@@ -25,13 +25,13 @@ module Codebreaker
               puts "You don't have any hints!"
             end
           when 'exit'
-            return
+            break
           else
-            puts @game.break_the_code(action)            
+            puts @game.break_the_code(action)         
           end
-        save_score if @game.won?
+        save_score if @game.send(:won?)
       end until game_over?
-      play_again?
+      play_again
     end
   
     private
@@ -53,10 +53,10 @@ module Codebreaker
     end
 
     def game_over?
-      @game.losing? || @game.won?
+      @game.send(:losing?) || @game.send(:won?)
     end
 
-    def play_again?
+    def play_again
       puts "Would You like to play again? (y/n)"
       exit unless get_action == 'y' 
       @game = Game.new('John Doe')

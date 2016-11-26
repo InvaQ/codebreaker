@@ -28,14 +28,7 @@ module Codebreaker
       end
     end
 
-    context 'when #guess code' do
-
-      context 'when code is not valid' do
-        it 'should return warning: You should enter 4 numbers from 1 to 6!' do
-          allow(game).to receive(:code_valid?).and_return(false)
-          expect(game.guess_code('1234')).to eq("You should enter 4 numbers from 1 to 6!")
-        end
-      end
+    context 'when #guess code' do      
 
       context 'consist of numbers 1-6' do        
         it '#is_valid' do      
@@ -51,11 +44,7 @@ module Codebreaker
         it '#is_not_valid' do    
           expect(game.send(:code_valid?,'1039')).to be_falsy
         end
-        it '@gamer_guess is empty' do
-          allow(game).to receive(:code_valid?).and_return(false)
-          game.guess_code('1039')
-          expect(game.gamer_guess).to be_nil
-        end
+        
       end
       it 'should decrease tries_left by 1' do        
         expect {game.guess_code('1234')}.to change{ game.tries_left }.by(-1)
@@ -78,8 +67,7 @@ module Codebreaker
               it "should reply #{code[2]}" do
                 game.instance_variable_set(:@secret_code, code[0])
                 game.guess_code(code[1])
-                expect(game.send(:algoritm,game.gamer_guess,
-                game.instance_variable_get(:@secret_code))).to eq(code[2])
+                expect(game.send(:algoritm)).to eq(code[2])
               end
             end
           end
@@ -98,6 +86,19 @@ module Codebreaker
       end
 
       context '#break_the_code' do
+
+        context 'when code is not valid' do
+          it 'should return warning: You should enter 4 numbers from 1 to 6!' do
+            allow(game).to receive(:code_valid?).and_return(false)
+            expect(game.break_the_code('1234')).to eq("You should enter 4 numbers from 1 to 6!")
+          end
+        end
+
+        it '@gamer_guess is empty' do
+          allow(game).to receive(:code_valid?).and_return(false)
+          game.break_the_code('1039')
+          expect(game.gamer_guess).to be_nil
+        end
 
         context 'cause game_over' do 
         it 'when losing the game' do

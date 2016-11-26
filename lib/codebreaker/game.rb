@@ -4,7 +4,8 @@ module Codebreaker
   class Game
     TRIES = 6
     HINTS = 1
-    attr_accessor :gamer_guess, :current_user, :tries_left, :hints
+    attr_reader :gamer_guess, :current_user, :hints
+    attr_accessor :tries_left
 
     def initialize(name)      
       @current_user = Gamer.new(name)
@@ -13,24 +14,20 @@ module Codebreaker
       @hints = HINTS
     end
     
-    def guess_code(code)
-      if code_valid?(code)
+    def guess_code(code)      
         @gamer_guess = code
-        @tries_left -= 1        
-      else
-        "You should enter 4 numbers from 1 to 6!"
-      end      
+        @tries_left -= 1          
     end
 
     def break_the_code(code)
       return 'GAME OVER' if losing?
-      guess_code(code)
+      code_valid?(code) ? guess_code(code) : (return "You should enter 4 numbers from 1 to 6!")
       return 'Congratulation, You have broken the code!' if won?
-      algoritm(@secret_code, @gamer_guess)
+      algoritm
     end
 
 
-    #private
+    private
 
     def code_valid?(code)
       !!code.match(/\A[1-6]{4}\Z/)
@@ -48,9 +45,9 @@ module Codebreaker
       @gamer_guess == @secret_code
     end
 
-    def algoritm(secret_code, gamer_guess)
-      secret = secret_code.chars
-      guess = gamer_guess.chars
+    def algoritm
+      secret = @secret_code.chars
+      guess = @gamer_guess.chars
       result = ''
       guess.map.with_index do | value, index |
         if value == secret[index]
