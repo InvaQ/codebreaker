@@ -3,6 +3,7 @@ require 'spec_helper'
 module Codebreaker
   RSpec.describe Game do
     let(:game) {Game.new('Bob')}
+    let(:secret) {game.instance_variable_get(:@secret_code)}
 
 
     context '#initialize' do
@@ -20,11 +21,11 @@ module Codebreaker
       expect(game.send(:generate_secret_code)).to be_kind_of(String)      
       end
       it 'secret code is present' do
-        expect(game.instance_variable_get(:@secret_code)).not_to be_empty
+        expect(secret).not_to be_empty
       end
       it 'generates secret code of 4 numbers from 1 to 6' do
         allow(game).to receive(:generate_secret_code)
-        expect(game.instance_variable_get(:@secret_code)).to match(/\A[1-6]{4}\Z/)
+        expect(secret).to match(/\A[1-6]{4}\Z/)
       end
     end
 
@@ -77,11 +78,12 @@ module Codebreaker
       context '#get_hint' do
 
         it 'should decrease hints by 1' do
-          expect {game.send(:get_hint)}.to change{ game.hints }.by(-1)
+          expect {game.get_hint}.to change{ game.hints }.by(-1)
         end
 
         it 'should show one number of secret code' do
-          expect(game.instance_variable_get(:@secret_code)).to include(game.send(:get_hint))
+
+          expect(secret).to include(game.get_hint[-1])
         end
       end
 
@@ -113,16 +115,6 @@ module Codebreaker
 
       end
 
-
-
-
-
-
-
-
-
       
   end
 end
-#gamer = Gamer.new('Kovalenko')
-#allow_any_instance_of(Game).to receive(:new).with(gamer)

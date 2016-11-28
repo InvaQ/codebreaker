@@ -45,7 +45,18 @@ module Codebreaker
         expect{ console.play }.to output(/Would You like to play again/).to_stdout
       end
 
-      
+      context "when input = '1234'" do
+        before do 
+        allow(console).to receive(:get_action).and_return('1234')         
+        end
+        it "should be wining" do 
+          allow(game).to receive(game.send(:break_the_code)).and_return('++++')
+
+        end
+        it "should be losing" do 
+
+        end
+      end
     end
 
 

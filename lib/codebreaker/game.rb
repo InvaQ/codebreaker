@@ -4,7 +4,7 @@ module Codebreaker
   class Game
     TRIES = 6
     HINTS = 1
-    attr_reader :gamer_guess, :current_user, :hints
+    attr_reader :gamer_guess, :current_user, :hints, :secret_code
     attr_accessor :tries_left
 
     def initialize(name)      
@@ -22,8 +22,14 @@ module Codebreaker
     def break_the_code(code)
       return 'GAME OVER' if losing?
       code_valid?(code) ? guess_code(code) : (return "You should enter 4 numbers from 1 to 6!")
-      return 'Congratulation, You have broken the code!' if won?
+      return 'Congratulation, You broke the code!' if won?
       algoritm
+    end
+
+    def get_hint
+      @hints.positive? or return 'You don\'t have any hints!'
+      @hints-= 1
+      "One number of the secret code is #{@secret_code[rand(4)]}"
     end
 
 
@@ -65,10 +71,7 @@ module Codebreaker
       result
     end
 
-    def get_hint
-      @hints -= 1
-      @secret_code[rand(4)]
-    end
+    
 
   end
 

@@ -19,11 +19,7 @@ module Codebreaker
         case action
 
           when 'hint'
-            if @game.hints == 1
-              puts "One number of the secret code is #{@game.send(:get_hint)}"
-            else
-              puts "You don't have any hints!"
-            end
+             puts @game.get_hint
           when 'exit'
             break
           else
@@ -35,6 +31,7 @@ module Codebreaker
     end
   
     private
+    
     def get_action
       gets.chomp
     end
@@ -65,13 +62,13 @@ module Codebreaker
     def save_score
       puts "Would You like to save score? (y/n)"
       exit unless get_action == 'y'
-      buffer = [@game.current_user.name, [@game.hints,
-                Game::TRIES - @game.tries_left]]
-      File.open('score.yml', 'w') do |string|
+      buffer = ["Name: #{@game.current_user.name}", ["hints: #{@game.hints}",
+                "tries: #{Game::TRIES - @game.tries_left}"]]
+      File.open('score.yml', 'a') do |string|
       string.write buffer.to_yaml
     end
 
+    end
   end
-end
 
 end
