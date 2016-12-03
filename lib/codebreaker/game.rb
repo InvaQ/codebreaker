@@ -32,6 +32,9 @@ module Codebreaker
       "One number of the secret code is #{@secret_code[rand(4)]}"
     end
 
+    def tries_used
+      TRIES - tries_left
+    end
 
     private
 

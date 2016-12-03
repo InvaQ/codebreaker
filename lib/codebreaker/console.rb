@@ -1,4 +1,5 @@
 require 'yaml'
+require 'pry'
 
 module Codebreaker
   
@@ -13,18 +14,19 @@ module Codebreaker
       intro
 
       begin
-        puts "Now #{@game.current_user.name}, try to break me!"
+        puts "Now #{@game.secret_code}, try to break me!"
         action = get_action
 
         case action
 
           when 'hint'
-             puts @game.get_hint
+             puts @game.get_hint             
           when 'exit'
             break
           else
             puts @game.break_the_code(action)         
-          end
+        end
+          #binding.pry
         save_score if @game.send(:won?)
       end until game_over?
       play_again
@@ -45,6 +47,7 @@ module Codebreaker
       You have #{Game::TRIES} tries to break the code\n
       also You have #{Game::HINTS} hint(s). To get one use 'hint'\n
       For exit the game use 'exit'.\n\n"
+
       puts "Please, enter your name\n"
       @game.current_user.name = get_action
     end
@@ -55,20 +58,33 @@ module Codebreaker
 
     def play_again
       puts "Would You like to play again? (y/n)"
-      exit unless get_action == 'y' 
+      get_action == 'y' or exit
       @game = Game.new('John Doe')
       play      
     end
+
+    #def save_score
+    #  puts "Would You like to save score? (y/n)"
+    #  get_action == 'y' or exit
+    #  buffer = ["Name: #{@game.current_user.name}", ["hints: #{@game.hints}",
+    #            "tries: #{@game.tries_used}"]]
+    #  File.open('score.yml', 'a') do |string|
+    #    string.write buffer.to_yaml
+    #  end  
+    #end
+
+    def write_data(file)
+      buffer = ["Name: #{@game.current_user.name}", ["hints: #{@game.hints}",
+                "tries: #{@game.tries_used}"]]        
+      file.write buffer.to_yaml
+       
+    end
+
     def save_score
       puts "Would You like to save score? (y/n)"
-      exit unless get_action == 'y'
-      buffer = ["Name: #{@game.current_user.name}", ["hints: #{@game.hints}",
-                "tries: #{Game::TRIES - @game.tries_left}"]]
-      File.open('score.yml', 'a') do |string|
-      string.write buffer.to_yaml
-    end
-
+      get_action == 'y' or exit
+      path = File.open('score.yml', 'a')
+      write_data(path)
     end
   end
-
 end

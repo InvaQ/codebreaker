@@ -109,7 +109,7 @@ module Codebreaker
         end    
         it 'when won the game' do
           game.instance_variable_set(:@secret_code, '1234')
-          expect(game.break_the_code('1234')).to eq('Congratulation, You have broken the code!')
+          expect(game.break_the_code('1234')).to eq('Congratulation, You broke the code!')
         end
       end 
 
