@@ -14,7 +14,7 @@ module Codebreaker
       intro
 
       begin
-        puts "Now #{@game.secret_code}, try to break me!"
+        puts "Now #{@game.current_user.name}, try to break me!"
         action = get_action
 
         case action
