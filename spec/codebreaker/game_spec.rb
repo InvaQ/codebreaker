@@ -2,19 +2,11 @@ require 'spec_helper'
 
 module Codebreaker
   RSpec.describe Game do
-    let(:game) {Game.new('Bob')}
+    let(:game) {Game.new}
     let(:secret) {game.instance_variable_get(:@secret_code)}
 
 
-    context '#initialize' do
-
-      it 'current_user must be a Gamer' do 
-        expect(game.current_user).to be_an_instance_of(Gamer)
-      end
-
-      it 'current_user\'s name is present' do
-        expect(game.current_user.name).to eq('Bob')
-      end
+    context '#initialize' do     
 
       
       it 'generates random secret code' do

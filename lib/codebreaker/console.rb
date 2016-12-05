@@ -3,10 +3,12 @@ require 'pry'
 
 module Codebreaker
   
-  class Console    
+  class Console
+  attr_reader :current_user
 
     def initialize(name = 'John Doe')
-      @game = Game.new(name)
+      @current_user = Gamer.new(name)
+      @game = Game.new
     end
     
     def play
@@ -14,21 +16,20 @@ module Codebreaker
       intro
 
       begin
-        puts "Now #{@game.current_user.name}, try to break me!"
-        action = get_action
+        puts "Now #{@current_user.name}, try to break me!"       
 
-        case action
+        case action = get_action
 
-          when 'hint'
-             puts @game.get_hint             
+          when 'hint'            
+            puts @game.get_hint             
           when 'exit'
             break
-          else
-            puts @game.break_the_code(action)         
+          else            
+            puts @game.break_the_code(action)       
         end
           #binding.pry
         save_score if @game.send(:won?)
-      end until game_over?
+      end until @game.game_over?
       play_again
     end
   
@@ -49,17 +50,15 @@ module Codebreaker
       For exit the game use 'exit'.\n\n"
 
       puts "Please, enter your name\n"
-      @game.current_user.name = get_action
+      @current_user.name = get_action
     end
 
-    def game_over?
-      @game.send(:losing?) || @game.send(:won?)
-    end
+    
 
     def play_again
       puts "Would You like to play again? (y/n)"
       get_action == 'y' or exit
-      @game = Game.new('John Doe')
+      @game = Game.new
       play      
     end
 
@@ -74,7 +73,7 @@ module Codebreaker
     #end
 
     def write_data(file)
-      buffer = ["Name: #{@game.current_user.name}", ["hints: #{@game.hints}",
+      buffer = ["Name: #{@current_user.name}", ["hints: #{@game.hints}",
                 "tries: #{@game.tries_used}"]]        
       file.write buffer.to_yaml
        

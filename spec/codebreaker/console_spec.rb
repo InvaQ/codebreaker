@@ -4,15 +4,24 @@ module Codebreaker
   RSpec.describe Console do
     let(:console) {Console.new}
     let(:game) {console.instance_variable_get(:@game)}
+    let(:current_user) {console.instance_variable_get(:@current_user)}
 
     context '#initialize' do
+
+      it 'current_user must be a Gamer' do 
+        expect(console.current_user).to be_an_instance_of(Gamer)
+      end
+
+      it 'current_user\'s name is present' do
+        expect(console.current_user.name).to eq('John Doe')
+      end
 
       it 'should create a game' do 
         expect(game).to be_an_instance_of(Game)
       end
 
       it 'current_user\'s name is present' do
-        expect(game.current_user.name).to eq('John Doe')
+        expect(console.current_user.name).to eq('John Doe')
       end
     end
 
@@ -27,7 +36,7 @@ module Codebreaker
       it 'should set gamers name' do
         allow(console).to receive(:get_action).and_return('Bob')
         console.send(:intro)
-        expect(game.current_user.name).to eq('Bob')       
+        expect(console.current_user.name).to eq('Bob')       
       end
     end 
 
@@ -35,7 +44,7 @@ module Codebreaker
       before do
         allow(console).to receive(:intro)
         allow(game).to receive(:won?).and_return(false)
-        allow(console).to receive(:game_over?).and_return(true)
+        allow(game).to receive(:game_over?).and_return(true)
         allow(console).to receive(:play_again).and_return('Would You like to play again?')
       end
 
@@ -61,7 +70,7 @@ module Codebreaker
 
     context 'when #save_score' do
       it 'confirmed, should append file' do
-        allow(game).to receive_message_chain(:current_user, :name).and_return('Bob')        
+        allow(current_user).to receive(:name).and_return('Bob')        
         allow(game).to receive(:hints).and_return(1)
         allow(game).to receive(:tries_used).and_return(3)
         allow(console).to receive(:get_action).and_return('y')
@@ -72,10 +81,10 @@ module Codebreaker
       end
       it 'denied, should exit' do
         allow(console).to receive(:get_action).and_return('n')        
-        #allow(console).to receive(:exit)
         expect{ console.send(:save_score) }.to raise_error(SystemExit)
       end
     end
+
     context 'when #play_again' do
       it 'confirmed, should run game again' do
         allow(console).to receive(:get_action).and_return('y')        
@@ -89,6 +98,5 @@ module Codebreaker
       end
 
     end
-
   end
 end
