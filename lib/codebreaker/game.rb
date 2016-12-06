@@ -19,16 +19,14 @@ module Codebreaker
     end
 
     def break_the_code(code)
-      #binding.pry
       return 'GAME OVER' if losing?
-
       code_valid?(code) ? guess_code(code) : (return "You should enter 4 numbers from 1 to 6!")
       return 'Congratulation, You broke the code!' if won?
       algoritm
     end
 
     def get_hint
-      @hints.positive? or return 'You don\'t have any hints!'
+      @hints.positive? || (return 'You don\'t have any hints!')
       @hints-= 1
       "One number of the secret code is #{@secret_code[rand(4)]}"
     end
@@ -48,7 +46,7 @@ module Codebreaker
     end
 
     def generate_secret_code
-      (0...4).map { rand(1..6) }.join
+      Array.new(4) { rand(1..6) }.join
     end
 
     def losing?
@@ -79,10 +77,5 @@ module Codebreaker
       result
     end
 
-    
-
   end
-
-  
-
 end

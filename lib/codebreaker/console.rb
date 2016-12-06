@@ -26,8 +26,7 @@ module Codebreaker
             break
           else            
             puts @game.break_the_code(action)       
-        end
-          #binding.pry
+        end          
         save_score if @game.send(:won?)
       end until @game.game_over?
       play_again
@@ -57,20 +56,11 @@ module Codebreaker
 
     def play_again
       puts "Would You like to play again? (y/n)"
-      get_action == 'y' or exit
+      get_action == 'y' || exit
       @game = Game.new
       play      
     end
-
-    #def save_score
-    #  puts "Would You like to save score? (y/n)"
-    #  get_action == 'y' or exit
-    #  buffer = ["Name: #{@game.current_user.name}", ["hints: #{@game.hints}",
-    #            "tries: #{@game.tries_used}"]]
-    #  File.open('score.yml', 'a') do |string|
-    #    string.write buffer.to_yaml
-    #  end  
-    #end
+    
 
     def write_data(file)
       buffer = ["Name: #{@current_user.name}", ["hints: #{@game.hints}",
@@ -81,7 +71,7 @@ module Codebreaker
 
     def save_score
       puts "Would You like to save score? (y/n)"
-      get_action == 'y' or exit
+      get_action == 'y' || exit
       path = File.open('score.yml', 'a')
       write_data(path)
     end
