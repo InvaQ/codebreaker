@@ -1,11 +1,14 @@
 require 'yaml'
+require 'pry'
 
 module Codebreaker
   
-  class Console    
+  class Console
+  attr_reader :current_user
 
     def initialize(name = 'John Doe')
-      @game = Game.new(name)
+      @current_user = Gamer.new(name)
+      @game = Game.new
     end
     
     def play
@@ -13,28 +16,24 @@ module Codebreaker
       intro
 
       begin
-        puts "Now #{@game.current_user.name}, try to break me!"
-        action = get_action
+        puts "Now #{@current_user.name}, try to break me!"       
 
-        case action
+        case action = get_action
 
-          when 'hint'
-            if @game.hints == 1
-              puts "One number of the secret code is #{@game.send(:get_hint)}"
-            else
-              puts "You don't have any hints!"
-            end
+          when 'hint'            
+            puts @game.get_hint             
           when 'exit'
             break
-          else
-            puts @game.break_the_code(action)         
-          end
+          else            
+            puts @game.break_the_code(action)       
+        end          
         save_score if @game.send(:won?)
-      end until game_over?
+      end until @game.game_over?
       play_again
     end
   
     private
+    
     def get_action
       gets.chomp
     end
@@ -48,30 +47,33 @@ module Codebreaker
       You have #{Game::TRIES} tries to break the code\n
       also You have #{Game::HINTS} hint(s). To get one use 'hint'\n
       For exit the game use 'exit'.\n\n"
+
       puts "Please, enter your name\n"
-      @game.current_user.name = get_action
+      @current_user.name = get_action
     end
 
-    def game_over?
-      @game.send(:losing?) || @game.send(:won?)
-    end
+    
 
     def play_again
       puts "Would You like to play again? (y/n)"
-      exit unless get_action == 'y' 
-      @game = Game.new('John Doe')
+      get_action == 'y' || exit
+      @game = Game.new
       play      
     end
-    def save_score
-      puts "Would You like to save score? (y/n)"
-      exit unless get_action == 'y'
-      buffer = [@game.current_user.name, [@game.hints,
-                Game::TRIES - @game.tries_left]]
-      File.open('score.yml', 'w') do |string|
-      string.write buffer.to_yaml
+    
+
+    def write_data(file)
+      buffer = ["Name: #{@current_user.name}", ["hints: #{@game.hints}",
+                "tries: #{@game.tries_used}"]]        
+      file.write buffer.to_yaml
+       
     end
 
+    def save_score
+      puts "Would You like to save score? (y/n)"
+      get_action == 'y' || exit
+      path = File.open('score.yml', 'a')
+      write_data(path)
+    end
   end
-end
-
 end
